@@ -1,4 +1,6 @@
 def flatten(nested_list):
+    if not nested_list:
+        return nested_list
     if not isinstance(nested_list[0], list):
         return nested_list
 
