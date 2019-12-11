@@ -4,7 +4,8 @@ from matplotlib.colors import ColorConverter, ListedColormap, get_named_colors_m
 
 DEFAULT_VMIN = 0
 DEFAULT_VMAX = 1
-DEFAULT_COLORMAP = 'hot'
+DEFAULT_COLORMAP = 'gray'
+THRESHOLD = 0.5
 
 
 def make_colormap(color):
@@ -20,11 +21,12 @@ COLORS = [ColorConverter.to_rgb(NAMED_COLORS[color])
 COLORMAPS = [make_colormap(COLOR) for COLOR in COLORS]
 
 
-def fuse_canals(im, colors=COLORS):
+def fuse_canals(im, colors=COLORS, threshold=THRESHOLD):
     new_im = np.zeros((im.shape[0], im.shape[1], 3))
     for x, line in enumerate(np.argmax(im, axis=-1)):
         for y, px in enumerate(line):
-            new_im[x, y] = colors[px]
+            if im[x, y, px] > threshold:
+                new_im[x, y] = colors[px]
     return new_im
 
 
