@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ColorConverter, ListedColormap, get_named_colors_mapping
 
+from Rignak_ImageProcessing.miscellaneous_image_operations import inverse_fourier_transform
+
 DEFAULT_VMIN = 0
 DEFAULT_VMAX = 1
 DEFAULT_COLORMAP = 'gray'
@@ -30,11 +32,22 @@ def fuse_canals(im, colors=COLORS, threshold=THRESHOLD):
     return new_im
 
 
-def imshow(im, cmap=DEFAULT_COLORMAP, vmin=DEFAULT_VMIN, vmax=DEFAULT_VMAX):
+def imshow(im, cmap=DEFAULT_COLORMAP, vmin=DEFAULT_VMIN, vmax=DEFAULT_VMAX, fourier_additive_term=0.5,
+           denormalizer=None):
+    if denormalizer is not None:
+        im = denormalizer(im)
     if len(im.shape) == 2:
         plt.imshow(im, vmin=vmin, vmax=vmax, cmap=cmap)
     elif im.shape[2] == 1:
         plt.imshow(im[:, :, 0], vmin=vmin, vmax=vmax, cmap=cmap)
+    elif im.shape[2] == 2:  # assume the image is a fourier transform
+        # TODO plot as map dataset
+        fourier_transform = im[:, :, 0] + im[:, :, 1] * 1j
+        im = np.abs(fourier_transform)
+        im /= np.max(im)
+
+        plt.imshow(im, vmin=vmin, vmax=vmax, cmap=cmap)
+
     elif im.shape[2] == 3:
         plt.imshow(im)
     else:
