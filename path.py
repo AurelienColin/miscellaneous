@@ -6,7 +6,10 @@ def get_local_file(src_file, dest_file):
 
 
 def create_path(path):
-    if os.path.splitext(path)[-1]:
+    path, ext = os.path.splitext(path)
+    if not path:
+        return
+    if ext:
         create_path(os.path.split(path)[0])
     else:
         root, folder = os.path.split(path)
