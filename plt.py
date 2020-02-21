@@ -33,23 +33,24 @@ def fuse_canals(im, colors=COLORS, threshold=THRESHOLD):
 
 
 def imshow(im, cmap=DEFAULT_COLORMAP, vmin=DEFAULT_VMIN, vmax=DEFAULT_VMAX, fourier_additive_term=0.5,
-           denormalizer=None):
+           denormalizer=None, interpolation="nearest"):
+    # print('plt l37', im.shape, cmap)
     if denormalizer is not None:
         im = denormalizer(im)
     if len(im.shape) == 2:
-        plt.imshow(im, vmin=vmin, vmax=vmax, cmap=cmap)
+        plt.imshow(im, vmin=vmin, vmax=vmax, cmap=cmap, interpolation=interpolation)
     elif im.shape[2] == 1:
-        plt.imshow(im[:, :, 0], vmin=vmin, vmax=vmax, cmap=cmap)
+        plt.imshow(im[:, :, 0], vmin=vmin, vmax=vmax, cmap=cmap, interpolation=interpolation)
     elif im.shape[2] == 2:  # assume the image is a fourier transform
         # TODO plot as map dataset
         fourier_transform = im[:, :, 0] + im[:, :, 1] * 1j
         im = np.abs(fourier_transform)
         im /= np.max(im)
 
-        plt.imshow(im, vmin=vmin, vmax=vmax, cmap=cmap)
+        plt.imshow(im, vmin=vmin, vmax=vmax, cmap=cmap, interpolation=interpolation)
 
     elif im.shape[2] == 3:
-        plt.imshow(im)
+        plt.imshow(im, interpolation=interpolation)
     else:
         im = fuse_canals(im)
-        plt.imshow(im)
+        plt.imshow(im, interpolation=interpolation)
