@@ -1,8 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ColorConverter, ListedColormap, get_named_colors_mapping
-
-from Rignak_ImageProcessing.miscellaneous_image_operations import inverse_fourier_transform
+import matplotlib.patches as mpatches
 
 DEFAULT_VMIN = 0
 DEFAULT_VMAX = 1
@@ -23,20 +22,29 @@ COLORS = [ColorConverter.to_rgb(NAMED_COLORS[color])
 COLORMAPS = [make_colormap(COLOR) for COLOR in COLORS]
 
 
-def fuse_canals(im, colors=COLORS, threshold=THRESHOLD):
+def fuse_canals(im, colors=COLORS, threshold=THRESHOLD, labels=()):
     new_im = np.zeros((im.shape[0], im.shape[1], 3))
     for x, line in enumerate(np.argmax(im, axis=-1)):
         for y, px in enumerate(line):
             if im[x, y, px] > threshold:
                 new_im[x, y] = colors[px]
+
+    plt.legend(handles=[mpatches.Patch(color=color, label=label) for color, label in zip(colors, labels)],
+               loc='center left', bbox_to_anchor=(1, 0.5))
+
     return new_im
 
 
-def imshow(im, cmap=DEFAULT_COLORMAP, vmin=DEFAULT_VMIN, vmax=DEFAULT_VMAX, fourier_additive_term=0.5,
-           denormalizer=None, interpolation="nearest"):
-    # print('plt l37', im.shape, cmap)
+def imshow(im, cmap=DEFAULT_COLORMAP, vmin=DEFAULT_VMIN, vmax=DEFAULT_VMAX,
+           denormalizer=None, interpolation="nearest", labels=None):
     if denormalizer is not None:
         im = denormalizer(im)
+    if im.mean() < 1 and vmax != 1:
+        im = im * 255
+        im = im.astype('uint8')
+    if im.mean() > 1 and vmax == 1:
+        im = im / 255
+
     if len(im.shape) == 2:
         plt.imshow(im, vmin=vmin, vmax=vmax, cmap=cmap, interpolation=interpolation)
     elif im.shape[2] == 1:
@@ -52,5 +60,5 @@ def imshow(im, cmap=DEFAULT_COLORMAP, vmin=DEFAULT_VMIN, vmax=DEFAULT_VMAX, four
     elif im.shape[2] == 3:
         plt.imshow(im, interpolation=interpolation)
     else:
-        im = fuse_canals(im)
+        im = fuse_canals(im, labels=labels)
         plt.imshow(im, interpolation=interpolation)
