@@ -36,13 +36,13 @@ def fuse_canals(im, colors=COLORS, threshold=THRESHOLD, labels=()):
 
 
 def imshow(im, cmap=DEFAULT_COLORMAP, vmin=DEFAULT_VMIN, vmax=DEFAULT_VMAX,
-           denormalizer=None, interpolation="nearest", labels=None):
+           denormalizer=None, interpolation="nearest", labels=None, threshold=THRESHOLD):
     if denormalizer is not None:
         im = denormalizer(im)
-    if im.mean() < 1 and vmax != 1:
+    if im.max() < 1 and vmax != 1:
         im = im * 255
         im = im.astype('uint8')
-    if im.mean() > 1 and vmax == 1:
+    if im.max() > 1 and vmax == 1:
         im = im / 255
 
     if len(im.shape) == 2:
@@ -60,5 +60,5 @@ def imshow(im, cmap=DEFAULT_COLORMAP, vmin=DEFAULT_VMIN, vmax=DEFAULT_VMAX,
     elif im.shape[2] == 3:
         plt.imshow(im, interpolation=interpolation)
     else:
-        im = fuse_canals(im, labels=labels)
+        im = fuse_canals(im, labels=labels, threshold=threshold)
         plt.imshow(im, interpolation=interpolation)
