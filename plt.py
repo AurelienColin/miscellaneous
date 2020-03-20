@@ -22,15 +22,17 @@ COLORS = [ColorConverter.to_rgb(NAMED_COLORS[color])
 COLORMAPS = [make_colormap(COLOR) for COLOR in COLORS]
 
 
-def fuse_canals(im, colors=COLORS, threshold=THRESHOLD, labels=()):
+def fuse_canals(im, colors=COLORS, threshold=THRESHOLD, labels=(), initial=0, legend_anchor=(0, -0.75)):
     new_im = np.zeros((im.shape[0], im.shape[1], 3))
+    new_im[:, :, :] = initial
     for x, line in enumerate(np.argmax(im, axis=-1)):
         for y, px in enumerate(line):
             if im[x, y, px] > threshold:
                 new_im[x, y] = colors[px]
 
-    plt.legend(handles=[mpatches.Patch(color=color, label=label) for color, label in zip(colors, labels)],
-               loc='center left', bbox_to_anchor=(1, 0.5))
+    if labels:
+        plt.legend(handles=[mpatches.Patch(color=color, label=label) for color, label in zip(colors, labels)],
+                   loc='center left', bbox_to_anchor=legend_anchor)
 
     return new_im
 
@@ -39,7 +41,7 @@ def imshow(im, cmap=DEFAULT_COLORMAP, vmin=DEFAULT_VMIN, vmax=DEFAULT_VMAX,
            denormalizer=None, interpolation="nearest", labels=None, threshold=THRESHOLD):
     if denormalizer is not None:
         im = denormalizer(im)
-    if im.max() < 1 and vmax != 1:
+    if im.max() <= 1 and vmax != 1:
         im = im * 255
         im = im.astype('uint8')
     if im.max() > 1 and vmax == 1:
