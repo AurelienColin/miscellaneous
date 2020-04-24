@@ -34,11 +34,9 @@ def convert_link(link):
 def list_dir(root):
     folders = [folder for folder in os.listdir(root) if
                os.path.isdir(os.path.join(root, folder)) or folder.endswith('.lnk')]
-    print('l30', folders)
     for i, folder in enumerate(folders):
         if folder.endswith('.lnk'):
             folders[i] = convert_link(os.path.join(root, folder))
         else:
             folders[i] = os.path.join(root, folder)
-    print('l35', folders)
     return folders
