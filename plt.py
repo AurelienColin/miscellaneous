@@ -6,7 +6,7 @@ import matplotlib.patches as mpatches
 DEFAULT_VMIN = 0
 DEFAULT_VMAX = 1
 DEFAULT_COLORMAP = 'gray'
-THRESHOLD = 0.5
+THRESHOLD = 0.0
 
 
 def make_colormap(color):
@@ -22,7 +22,7 @@ COLORS = [ColorConverter.to_rgb(NAMED_COLORS[color])
 COLORMAPS = [make_colormap(COLOR) for COLOR in COLORS]
 
 
-def fuse_canals(im, colors=COLORS, threshold=THRESHOLD, labels=None, initial=0, legend_anchor=(1, 0.5)):
+def fuse_canals(im, colors=COLORS, threshold=THRESHOLD, labels=None, initial=0, legend_anchor=(1, 1)):
     new_im = np.zeros((im.shape[0], im.shape[1], 3))
     new_im[:, :, :] = initial
     for x, line in enumerate(np.argmax(im, axis=-1)):
@@ -39,13 +39,17 @@ def fuse_canals(im, colors=COLORS, threshold=THRESHOLD, labels=None, initial=0, 
 
 def imshow(im, cmap=DEFAULT_COLORMAP, vmin=DEFAULT_VMIN, vmax=DEFAULT_VMAX,
            denormalizer=None, interpolation="nearest", labels=None, threshold=THRESHOLD):
-    if denormalizer is not None:
-        im = denormalizer(im)
-    if im.max() <= 1 and vmax != 1:
-        im = im * 255
-        im = im.astype('uint8')
-    if im.max() > 1 and vmax == 1:
-        im = im / 255
+    # if denormalizer is not None:
+    #     im = denormalizer(im)
+    if im.min() < 0:
+        vmin = im.min()
+        vmax = im.max()
+    else:
+        if im.max() <= 1 and vmax != 1:
+            im = im * 255
+            im = im.astype('uint8')
+        if im.max() > 1 and vmax == 1:
+            im = im / 255
 
     if len(im.shape) == 2:
         plt.imshow(im, vmin=vmin, vmax=vmax, cmap=cmap, interpolation=interpolation)
