@@ -22,7 +22,7 @@ COLORS = [ColorConverter.to_rgb(NAMED_COLORS[color])
 COLORMAPS = [make_colormap(COLOR) for COLOR in COLORS]
 
 
-def fuse_canals(im, colors=COLORS, threshold=THRESHOLD, labels=None, initial=0, legend_anchor=(1, 1)):
+def fuse_canals(im, colors=COLORS, threshold=THRESHOLD, labels=None, initial=0, legend_anchor=(1, 0.5)):
     new_im = np.zeros((im.shape[0], im.shape[1], 3))
     new_im[:, :, :] = initial
     for x, line in enumerate(np.argmax(im, axis=-1)):
