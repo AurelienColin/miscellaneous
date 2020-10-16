@@ -37,10 +37,8 @@ def fuse_canals(im, colors=COLORS, threshold=THRESHOLD, labels=None, initial=0, 
     return new_im
 
 
-def imshow(im, cmap=DEFAULT_COLORMAP, vmin=DEFAULT_VMIN, vmax=DEFAULT_VMAX,
-           denormalizer=None, interpolation="nearest", labels=None, threshold=THRESHOLD):
-    # if denormalizer is not None:
-    #     im = denormalizer(im)
+def imshow(im, cmap=DEFAULT_COLORMAP, vmin=DEFAULT_VMIN, vmax=DEFAULT_VMAX, interpolation="nearest",
+           labels=None, threshold=THRESHOLD):
     if im.min() < 0:
         vmin = im.min()
         vmax = im.max()
