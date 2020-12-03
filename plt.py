@@ -27,7 +27,9 @@ def fuse_canals(im, colors=COLORS, threshold=THRESHOLD, labels=None, initial=0, 
     new_im[:, :, :] = initial
     for x, line in enumerate(np.argmax(im, axis=-1)):
         for y, px in enumerate(line):
-            if im[x, y, px] > threshold:
+            if threshold == 'auto':
+                new_im[x, y] = np.array(colors[px]) * im[x, y, px]
+            elif im[x, y, px] > threshold:
                 new_im[x, y] = colors[px]
 
     if labels is not None:
