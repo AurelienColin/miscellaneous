@@ -1,8 +1,8 @@
 import threading
 import time
 
-from .custom_requests import config as config
-from .custom_requests.thread_with_return_value import ThreadWithReturnValue
+from . import config
+from .thread_with_return_value import ThreadWithReturnValue
 
 
 def freeze(mutable: (list, dict)) -> (tuple, frozenset):
