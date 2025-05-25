@@ -6,7 +6,7 @@ import matplotlib.axes
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn
-from Rignak.logging_utils import logger
+from rignak.logging_utils import logger
 from matplotlib.colors import LinearSegmentedColormap
 from mpl_toolkits.basemap import Basemap
 from scipy import stats
@@ -14,7 +14,7 @@ from scipy import stats
 CDOP_VRAD_CPT = os.path.join(os.path.dirname(__file__), 'cdop_vrad.cpt')
 
 from functools import wraps
-from Rignak.lazy_property import LazyProperty
+from rignak.lazy_property import LazyProperty
 
 
 def plot_decorator(format_ax: bool = True):

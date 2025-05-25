@@ -1,8 +1,8 @@
 import os
 
-import Rignak.local_config as config
-from Rignak.assert_utils import assert_argument_types
-from Rignak.logging_utils import logger
+import rignak.local_config as config
+from rignak.assert_utils import assert_argument_types
+from rignak.logging_utils import logger
 
 
 @assert_argument_types

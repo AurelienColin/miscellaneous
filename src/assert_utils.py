@@ -1,7 +1,7 @@
 import functools
 import os
 
-from Rignak.logging_utils import logger
+from rignak.logging_utils import logger
 
 
 class ExistingFilename(str):

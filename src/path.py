@@ -1,6 +1,6 @@
 import os
 
-from Rignak.assert_utils import assert_argument_types
+from rignak.assert_utils import assert_argument_types
 
 
 @assert_argument_types

@@ -14,8 +14,8 @@ from PIL import Image, UnidentifiedImageError # Added for image processing
 import bs4 as BeautifulSoup
 import requests
 
-from Rignak.custom_requests import local_config as config
-from Rignak.init import ExistingFilename, assert_argument_types
+from rignak.custom_requests import local_config as config
+from rignak.init import ExistingFilename, assert_argument_types
 
 
 @assert_argument_types
@@ -29,9 +29,12 @@ def request_with_retry(
 ) -> typing.Union[requests.Response, str, None]:
     for iteration in range(maximum_retries):
         try:
-            res = get(url, headers=headers, cookies=cookies, verify=True)
-            if soup:
-                res = BeautifulSoup.BeautifulSoup(res.text, "lxml")
+            if get is requests.get:
+                res = get(url, headers=headers, cookies=cookies, verify=True)
+                if soup:
+                    res = BeautifulSoup.BeautifulSoup(res.text, "lxml")
+            else:
+                res = get(url)
             return res
         except Exception as e:
             print(f'request.request_with_retry: Error: {url} because of "{repr(e)}"')
