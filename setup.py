@@ -20,6 +20,7 @@ setup(
         "scipy",
         "matplotlib",
         "seaborn",
+        'pytest',
         # stem is optional, see extras_require
     ],
     extras_require={
