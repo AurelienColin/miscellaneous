@@ -1,4 +1,31 @@
 class LazyProperty:
+    """
+    The LazyProperty is used to be less verbose. Eg., the following code:
+    It implements lazy computation (i.e. computing variables only when needed)
+    and run a sanity check (non-None) to ensure when do get stuck in a loop.
+
+
+    @dataclass
+    class Foo:
+        _bar: typing.Optional[int] = None
+
+        def bar(self) -> int:
+            if self._bar is None:
+                self._bar = ...
+            assert self._bar is not None
+            return self._bar
+
+    is replaced by:
+
+    @dataclass
+    class Foo:
+        _bar: typing.Optional[int] = None
+
+        @LazyProperty
+        def bar(self) -> int:
+            return ....
+    """
+
     def __init__(self, func):
         self.func = func
         self.attr_name = f"_{func.__name__}"
