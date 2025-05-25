@@ -9,7 +9,7 @@ HEADERS = {
     'Accept-Language': 'en-US,en;q=0.9',
     'Referer': 'https://www.pixiv.net/'
 }
-MAXIMUM_RETRIES = 5
+MAXIMUM_RETRIES = 3
 
 CookieType = CookieJar
 try:
@@ -21,7 +21,7 @@ except (UnicodeDecodeError, ImportError) as e:
     COOKIES = None
     print(f"Error when reading Cookies: {e}")
 
-PARALLEL_THREADS_LIMIT = 20
+PARALLEL_THREADS_LIMIT = 5
 SECONDS_BETWEEN_THREADS = 0
 THREAD_TIMEOUT = 10
 SECONDS_AFTER_COMPLETION = 10

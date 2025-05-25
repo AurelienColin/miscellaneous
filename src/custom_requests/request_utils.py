@@ -34,8 +34,8 @@ def request_with_retry(
                 res = get(url)
             return res
         except Exception as e:
-            print(f'request.request_with_retry: Error: {url} because of "{repr(e)}"')
-            time.sleep(10)
+            # print(f'request.request_with_retry: Error: {url} because of "{repr(e)}"')
+            time.sleep(config.THREAD_TIMEOUT)
     return None
 
 
@@ -52,7 +52,7 @@ def request_stream(
             if r.status_code == 200:
                 return r.raw
             elif r.status_code == 429:  # spam
-                time.sleep(1)
+                time.sleep(config.THREAD_TIMEOUT)
         except Exception as e:
             print(f'request.request_stream: Error: {url} because of "{repr(e)}"')
     return None
