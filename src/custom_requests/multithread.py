@@ -1,8 +1,8 @@
 import threading
 import time
 
-from rignak.custom_requests import local_config as config
-from rignak.custom_requests.thread_with_return_value import ThreadWithReturnValue
+from .custom_requests import config as config
+from .custom_requests.thread_with_return_value import ThreadWithReturnValue
 
 
 def freeze(mutable: (list, dict)) -> (tuple, frozenset):
