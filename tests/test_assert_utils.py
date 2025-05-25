@@ -85,11 +85,13 @@ def test_assert_argument_types_with_existing_filename_correct():
     dummy_file_name = "test_dummy_decorator.txt"
     with open(dummy_file_name, "w") as f:
         f.write("test")
-    
+
+    dummy_file_name = ExistingFilename(dummy_file_name)
     result = function_with_existing_filename(dummy_file_name)
     assert result == dummy_file_name
     os.remove(dummy_file_name)
 
 def test_assert_argument_types_with_existing_filename_incorrect():
     with pytest.raises(AssertionError):
-        function_with_existing_filename("non_existent_decorator.txt")
+        dummy_file_name = ExistingFilename("non_existent_decorator.txt")
+        function_with_existing_filename(dummy_file_name)

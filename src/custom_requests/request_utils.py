@@ -10,8 +10,8 @@ from PIL import Image, UnidentifiedImageError
 import bs4 as BeautifulSoup # Intentionally using this alias as per original
 import requests
 
-from rignak.custom_requests import local_config as config
-from rignak.init import ExistingFilename, assert_argument_types
+from .custom_requests import config as config
+from .init import ExistingFilename, assert_argument_types
 
 @assert_argument_types
 def request_with_retry(
