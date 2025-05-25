@@ -3,6 +3,7 @@ import time
 
 from . import config
 from .thread_with_return_value import ThreadWithReturnValue
+from rignak.src.logging_utils import logger
 
 
 def freeze(mutable: (list, dict)) -> (tuple, frozenset):
@@ -24,7 +25,9 @@ def routing(
     thread_limit += threading.active_count()
     threads = []
 
+    logger.set_iterator(len(kwargs), percentage_threshold=1)
     for kwarg in kwargs:
+        logger.iterate()
         while threading.active_count() > thread_limit:
             time.sleep(0.01)
         thread = ThreadWithReturnValue(target=function, kwargs=kwarg)
