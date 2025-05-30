@@ -21,6 +21,7 @@ setup(
         "matplotlib",
         "seaborn",
         'pytest',
+        "lxml",
         # stem is optional, see extras_require
     ],
     extras_require={
