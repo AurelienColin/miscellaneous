@@ -1,9 +1,7 @@
 import os
 import shutil
 import time
-import typing
 from urllib.parse import urlparse
-from io import BytesIO
 from pathlib import Path
 from PIL import Image, UnidentifiedImageError
 from http.cookiejar import CookieJar
@@ -68,6 +66,7 @@ def request_stream(
                 cookies=cookies,
                 timeout=config.THREAD_TIMEOUT
             )
+
             response.raise_for_status()
             return response.raw
 
@@ -132,13 +131,13 @@ def download_file_as_jpg(
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    if jpg_file_path.exists():
-        return str(jpg_file_path)
+    # if jpg_file_path.exists():
+    #     return str(jpg_file_path)
 
     byte_stream: Optional[BinaryIO] = None
     pil_image: Optional[Image.Image] = None
     try:
-        byte_stream = request_stream(url, headers=headers)
+        byte_stream = request_stream(url, headers={})
         if byte_stream is None:
             return None
 
@@ -171,9 +170,11 @@ def download_file_as_jpg(
         pil_image.save(jpg_file_path, 'JPEG', quality=jpg_quality, optimize=True)
         return str(jpg_file_path)
 
-    except UnidentifiedImageError:
+    except UnidentifiedImageError as e:
+        logger(f"UnidentifiedImageError: {url} -> {e}")
         return None
-    except Exception:
+    except Exception as e:
+        logger(f"{url} -> {e}")
         # Attempt to clean up partially written file
         if jpg_file_path.exists():
             try:
