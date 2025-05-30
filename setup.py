@@ -10,7 +10,7 @@ setup(
     author="Rignak",
     author_email="",  # Add email if available or leave empty
     url="",  # Add project URL if available
-    packages=['rignak'],
+    packages=['rignak', 'rignak.custom_requests'],  # This will automatically find 'rignak' and 'rignak.custom_requests'
     package_dir={"rignak": "src"},
     install_requires=[
         "requests",
@@ -25,11 +25,10 @@ setup(
     ],
     extras_require={
         'tor': ['stem'],
-        'display': ['matplotlib', 'seaborn', 'numpy'] # Seaborn also often needs pandas
+        'display': ['matplotlib', 'seaborn', 'numpy']  # Seaborn also often needs pandas
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License", # Assuming MIT, adjust if different
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
