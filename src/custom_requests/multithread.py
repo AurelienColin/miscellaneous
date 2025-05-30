@@ -36,8 +36,7 @@ def freeze(mutable: Union[Dict[_K, _V], List[_V], _V]) -> FrozenType:
         return frozenset((key, freeze(value)) for key, value in mutable.items())
     elif isinstance(mutable, list):
         return tuple(freeze(value) for value in mutable)
-    # Assuming other types passed are already hashable (e.g., int, str, float, or already frozen)
-    return mutable # type: ignore 
+    return mutable
 
 
 def routing(
@@ -48,28 +47,18 @@ def routing(
         thread_timeout: Union[float, int] = config.THREAD_TIMEOUT,
         seconds_after_completion: Union[float, int] = config.SECONDS_AFTER_COMPLETION
 ) -> Dict[FrozenSet[Tuple[str, Any]], Optional[_R]]:
-    
-    # This behavior means the actual number of concurrent threads from this routing call
-    # plus existing threads should not exceed thread_limit + current_threads.
-    # It might be simpler to interpret thread_limit as the max for *this batch* of tasks.
-    # For now, sticking to the original logic:
     effective_max_threads: int = thread_limit + threading.active_count() 
     
     threads_info: List[Tuple[Dict[str, Any], ThreadWithReturnValue[_R]]] = []
-
-    # Assuming logger has set_iterator and iterate methods.
-    # If logger type is unknown, these calls might be flagged by a strict type checker.
-    logger.set_iterator(len(kwargs_list), percentage_threshold=1) # type: ignore
+    logger.set_iterator(len(kwargs_list), percentage_threshold=1)
 
     for kwarg_item in kwargs_list:
         logger.iterate() # type: ignore
         
-        while threading.active_count() >= effective_max_threads: # Use >= for clarity
+        while threading.active_count() >= effective_max_threads:
             time.sleep(0.01)
-            
-        # Create and start the thread. Pass the individual kwarg_item to the target function.
-        # ThreadWithReturnValue expects 'target' and 'kwargs' (and optionally 'args').
-        thread = ThreadWithReturnValue(target=function, kwargs=kwarg_item, args=()) # Pass empty args
+
+        thread = ThreadWithReturnValue(target=function, kwargs=kwarg_item)
         thread.start()
         threads_info.append((kwarg_item, thread))
 
@@ -79,21 +68,8 @@ def routing(
 
     results: Dict[FrozenSet[Tuple[str, Any]], Optional[_R]] = {}
     for original_kwargs, thread_instance in threads_info:
-        # Freeze the original kwargs to use as dict key.
-        # The type of key for 'results' dict is FrozenSet[Tuple[str, Any]]
-        # freeze(original_kwargs) should produce something compatible.
-        # original_kwargs is Dict[str, Any]. freeze will turn it into FrozenSet[Tuple[str, FrozenType]]
         frozen_key_intermediate = freeze(original_kwargs)
-        
-        # Ensure the frozen_key_intermediate is of the correct type for the dictionary key.
-        # If freeze returns a single Hashable for a non-dict/list input, this needs adjustment.
-        # Assuming original_kwargs is always a dict here.
         if not isinstance(frozen_key_intermediate, frozenset):
-            # This case should ideally not happen if original_kwargs are dicts.
-            # Handle or raise error if the key structure is not as expected.
-            # For now, converting to a frozenset of a tuple to fit Dict key type.
-            # This part is tricky and depends on the exact structure of what freeze returns for dicts.
-            # Assuming freeze(Dict) returns FrozenSet[Tuple[Hashable, FrozenType]]
             frozen_key = frozenset((("unexpected_frozen_key_structure", frozen_key_intermediate),))
         else:
             frozen_key = frozen_key_intermediate

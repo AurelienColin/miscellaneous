@@ -1,5 +1,6 @@
 from threading import Thread
 from typing import Optional, Callable, Any, TypeVar, Tuple, Dict, Union
+from rignak.src.logging_utils import logger
 
 _R = TypeVar('_R')
 
@@ -25,7 +26,7 @@ class ThreadWithReturnValue(Thread):
                 # For now, the thread will terminate and _return might remain None or an exception could be stored.
                 # Depending on requirements, self._return could store the exception instance.
                 # Raising e here would make the thread crash, which is default Thread behavior.
-                # print(f"Exception in thread {self.name}: {e}") # Example logging
+                logger(f"Exception in thread {self.name}: {e}") # Example logging
                 pass # Allow _return to remain None or be partially set if target has side effects before exception
 
 

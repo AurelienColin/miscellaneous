@@ -1,5 +1,6 @@
 import os
 from dataclasses import dataclass, field # Added field for default_factory
+from pathlib import Path
 from typing import ( 
     Optional, Callable, Any, Union, Dict, Sequence, Tuple, TypeVar, List, Type
 )
@@ -13,22 +14,17 @@ from matplotlib.collections import PathCollection
 from matplotlib.image import AxesImage 
 from matplotlib.container import BarContainer 
 from matplotlib.contour import QuadContourSet 
-from matplotlib.cm import ScalarMappable # For type of 'img' in colorbar
+from matplotlib.cm import ScalarMappable
 
 import numpy as np
-# np.generic is okay for scalar type hints, or use Union[int, float, bool, ...]
-# from numpy.typing import ArrayLike # More general than np.ndarray for inputs, but np.ndarray is fine.
 
 import seaborn 
-from .logging_utils import logger # Assuming logger is typed in its own module
+from .logging_utils import logger
 from matplotlib.colors import LinearSegmentedColormap 
 from mpl_toolkits.basemap import Basemap 
 from scipy import stats
-# from scipy.stats import FitResult # For pearsonr result which can be FitResult in newer scipy. PearsonRResult is in 3.9+
-from scipy.stats._stats_py import PearsonRResult 
+from scipy.stats._stats_py import PearsonRResult
 
-# For PIL.Image.Image
-from PIL import Image as PILImage # Alias to avoid conflict if Image is used elsewhere
 
 from .lazy_property import LazyProperty 
 
@@ -79,7 +75,6 @@ def plot_decorator(format_ax: bool = True) -> Callable[
             if format_ax:
                 instance.format_ax(ax_to_use, current_kwargs_obj)
             
-            instance.show(export_filename=current_kwargs_obj.export_filename, display=current_kwargs_obj.display)
             return results
         return wrapper
     return get_wrapper
@@ -370,11 +365,12 @@ class Display:
         
         if kwargs.grid:
             # Use a copy of grid_kwargs to avoid modifying the Kwargs instance's default
-            grid_p = dict(kwargs.grid_kwargs if kwargs.grid_kwargs else {}) 
-            grid_p['visible'] = kwargs.grid # Ensure visible is set
+            grid_p = dict(kwargs.grid_kwargs if kwargs.grid_kwargs else {})
             ax.grid(**grid_p) # type: ignore #Issue with ** unpacking TypedDict vs Dict
-            if kwargs.xscale == 'log': ax.grid(visible=kwargs.grid, which='minor', linestyle=':', axis='x', **grid_p) # type: ignore
-            if kwargs.yscale == 'log': ax.grid(visible=kwargs.grid, which='minor', linestyle=':', axis='y', **grid_p) # type: ignore
+            if kwargs.xscale == 'log':
+                ax.grid(visible=kwargs.grid, which='minor', linestyle=':', axis='x', **grid_p) # type: ignore
+            if kwargs.yscale == 'log':
+                ax.grid(visible=kwargs.grid, which='minor', linestyle=':', axis='y', **grid_p) # type: ignore
 
         ax.set_xlim(kwargs.xmin, kwargs.xmax) # Handles None internally
         ax.set_ylim(kwargs.ymin, kwargs.ymax) # Handles None internally
