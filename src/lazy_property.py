@@ -45,7 +45,7 @@ class LazyProperty(Generic[_T, _R]):
             return self # type: ignore 
         
         # This will raise AttributeError if self.attr_name (e.g., "_another_lazy_prop")
-        # was not defined in instance.__init__ (as in SampleClassNoInit from tests).
+        # was not defined in instance.__init__ (as in SampleClassNoInit from test).
         # This matches the expectation of test_lazy_property_without_explicit_init_in_constructor.
         current_value: Optional[_R] = getattr(instance, self.attr_name) 
         

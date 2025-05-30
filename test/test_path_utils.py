@@ -30,7 +30,7 @@ def setup_teardown_test_dir():
 
 
 def test_get_local_path():
-    # Assuming __file__ for test_path_utils.py is tests/test_path_utils.py
+    # Assuming __file__ for test_path_utils.py is test/test_path_utils.py
     # For robustness, we use a known file within our test structure
     expected = os.path.join(SUB_DIR, "file2.py")
     # We pass FILE_IN_SUB_DIR as the 'local_filename' argument to get_local_path
