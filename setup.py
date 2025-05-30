@@ -10,8 +10,8 @@ setup(
     author="Rignak",
     author_email="",  # Add email if available or leave empty
     url="",  # Add project URL if available
-    packages=find_packages(where="src"),
-    package_dir={"": "src"},
+    packages=['rignak'],
+    package_dir={"rignak": "src"},
     install_requires=[
         "requests",
         "beautifulsoup4",
