@@ -1,5 +1,5 @@
 import pytest
-from src.lazy_property import LazyProperty
+from rignak.lazy_property import LazyProperty
 
 class SampleClass:
     def __init__(self):

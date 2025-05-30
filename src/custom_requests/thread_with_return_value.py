@@ -1,6 +1,6 @@
 from threading import Thread
 from typing import Optional, Callable, Any, TypeVar, Tuple, Dict, Union
-from rignak.src.logging_utils import logger
+from rignak.logging_utils import logger
 
 _R = TypeVar('_R')
 

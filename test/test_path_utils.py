@@ -2,7 +2,7 @@ import pytest
 import os
 import shutil
 import numpy as np
-from src.path import get_local_path, listdir, get_parent_folder
+from rignak.path import get_local_path, listdir, get_parent_folder
 
 # Setup a temporary directory structure for testing
 TEST_DIR = "temp_test_path_dir"

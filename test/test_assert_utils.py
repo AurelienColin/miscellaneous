@@ -1,7 +1,7 @@
 import pytest
 import os
 import typing
-from src.assert_utils import assert_type, ExistingFilename, assert_argument_types
+from rignak.assert_utils import assert_type, ExistingFilename, assert_argument_types
 
 def test_assert_type_correct():
     assert_type("variable", 10, int)

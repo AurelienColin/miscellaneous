@@ -1,8 +1,8 @@
 import pytest
 import os
 import shutil
-from src.textfile_utils import get_lines, safe_file_replacement
-from src.config import ENCODING # Assuming ENCODING is accessible
+from rignak.textfile_utils import get_lines, safe_file_replacement
+from rignak.config import ENCODING # Assuming ENCODING is accessible
 
 TEST_DIR_TEXT = "temp_test_text_utils_dir"
 TEST_FILE = os.path.join(TEST_DIR_TEXT, "test_file.txt")
