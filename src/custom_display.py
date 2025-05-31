@@ -40,36 +40,25 @@ def plot_decorator(format_ax: bool = True) -> Callable[
     def get_wrapper(function: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(function)
         def wrapper(instance: 'Display', *args: Any, **call_kwargs: Any) -> Any:
-            # instance is 'self' of the Display class method
-            
-            # Extract 'ax' and 'kwargs' (Kwargs object) from call_kwargs if they were passed by name.
-            # If not, they will be None here.
             ax_from_call = call_kwargs.pop('ax', None)
             kwargs_obj_from_call = call_kwargs.pop('kwargs', None)
 
-            # Determine the Kwargs object to use
             if isinstance(kwargs_obj_from_call, Kwargs):
                 current_kwargs_obj = kwargs_obj_from_call
-                # Update this Kwargs object with any remaining call_kwargs (fields of Kwargs)
                 for field_name, field_value in call_kwargs.items():
                     if hasattr(current_kwargs_obj, field_name):
                         setattr(current_kwargs_obj, field_name, field_value)
             else:
-                # If Kwargs object wasn't passed, create one from all call_kwargs
-                # This assumes call_kwargs contains fields for Kwargs dataclass
                 current_kwargs_obj = Kwargs(**call_kwargs)
 
-            # Determine the Axes object to use
             ax_to_use: Optional[matplotlib.axes.Axes] = ax_from_call if ax_from_call is not None else instance.ax
-            if ax_to_use is None: # Still None, try to get the first one from Display's axes
+            if ax_to_use is None:
                 if instance._axes is None or len(instance._axes) == 0 : instance.refresh_axes()
                 ax_to_use = instance.axes[0] if instance.axes is not None and len(instance.axes) > 0 else None
             
             if ax_to_use is None:
                 raise ValueError("Axes object not available for plotting and could not be initialized.")
 
-            # Call the actual plotting function (e.g., Display.plot)
-            # The *args are the main data arguments (like x, y for plot method)
             results = function(instance, *args, ax=ax_to_use, kwargs=current_kwargs_obj)
             
             if format_ax:
@@ -91,21 +80,15 @@ def read_cpt(file_path: str = CDOP_VRAD_CPT) -> LinearSegmentedColormap:
             if len(parts) >= 8:
                 vals = [float(p) for p in parts[:8]]
                 x1, r1, g1, b1 = vals[0], vals[1]/255.0, vals[2]/255.0, vals[3]/255.0
-                # x2, r2, g2, b2 = vals[4], vals[5]/255.0, vals[6]/255.0, vals[7]/255.0 # x2,c2 not used per original
-                
-                # Assuming x1 is already scaled (e.g. 0 to 1). If CPT uses 0-100, x1 might need x1/100.
-                # Original LinearSegmentedColormap input format: (value, color_left_of_value, color_right_of_value)
-                # Here, it's (value, color_at_value, color_at_value) creating steps.
+
                 cdict['red'].append((x1, r1, r1))
                 cdict['green'].append((x1, g1, g1))
                 cdict['blue'].append((x1, b1, b1))
                 
     for color_key in cdict:
         cdict[color_key].sort(key=lambda tup: tup[0])
-        # Optional: Add 0.0 and 1.0 end points if missing, using nearest color.
-        # This depends on CPT file conventions.
         if not cdict[color_key] or cdict[color_key][0][0] > 0.0:
-            first_color = cdict[color_key][0][1:] if cdict[color_key] else (0.0,0.0) # Default to black if empty
+            first_color = cdict[color_key][0][1:] if cdict[color_key] else (0.0,0.0)
             cdict[color_key].insert(0, (0.0, first_color[0], first_color[1]))
         if cdict[color_key][-1][0] < 1.0:
             last_color = cdict[color_key][-1][1:]
@@ -222,7 +205,7 @@ class Kwargs:
             self._cmap = plt.get_cmap('viridis') 
 
         if self._cmap is not None: # Should always be true due to fallback
-            current_cmap_copy = self._cmap._copy() # type: ignore # Work on a copy to avoid modifying global cmap registry
+            current_cmap_copy = self._cmap.copy() # type: ignore # Work on a copy to avoid modifying global cmap registry
             current_cmap_copy.set_extremes(under=self.under_threshold_color, 
                                     over=self.over_threshold_color, 
                                     bad=self.invalid_color)

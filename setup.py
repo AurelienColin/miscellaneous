@@ -22,6 +22,7 @@ setup(
         "seaborn",
         'pytest',
         "lxml",
+        'basemap'
         # stem is optional, see extras_require
     ],
     extras_require={
