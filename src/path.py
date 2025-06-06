@@ -14,15 +14,10 @@ def get_local_path(
 
 # No @assert_argument_types for listdir as its signature is complex for the basic decorator
 def listdir(folder: str, extensions: Optional[Union[List[str], Tuple[str, ...]]] = None) -> List[str]:
-    # extensions can be None, or a list/tuple of strings like ['.txt', '.py']
-    
     filenames_in_dir: List[str] = [os.path.join(folder, filename) for filename in os.listdir(folder)]
     
     if extensions is not None:
-        # Ensure extensions is a tuple for the 'in' operator, if it's a list.
-        # This is good practice for consistency, though 'in' works with lists too.
-        valid_extensions: Union[List[str], Tuple[str, ...]] = extensions 
-        filenames_in_dir = [filename for filename in filenames_in_dir if os.path.splitext(filename)[1] in valid_extensions]
+        filenames_in_dir = [filename for filename in filenames_in_dir if os.path.splitext(filename)[1] in extensions]
         
     filenames_in_dir = sorted(filenames_in_dir)
     return filenames_in_dir
