@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 from pathlib import Path
 from PIL import Image, UnidentifiedImageError
 from http.cookiejar import CookieJar
-from rignak.logging_utils import logger
+from rignak.src.logging_utils import logger
 import bs4
 import requests
 from typing import Optional, Callable, Any, Union, Dict, BinaryIO
@@ -75,6 +75,19 @@ def request_stream(
             if iteration < maximum_retries - 1:
                 time.sleep(config.SECONDS_BETWEEN_THREADS)
     return None
+
+def download_from_youtube(url: str, filename: str, lowres:bool=True) -> None:
+    import yt_dlp
+        # These are the options passed to yt_dlp
+    ydl_opts = {'outtmpl': f'{os.path.splitext(filename)[0]}'}
+    if lowres:
+        ydl_opts['format'] = 'bestvideo[height<=480]+bestaudio[abr<=128]/best[height<=480]'
+
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        try:
+            ydl.download([url])
+        except yt_dlp.DownloadError as e:
+            logger(f"Error downloading {url}: {e}")
 
 
 def download_file(
