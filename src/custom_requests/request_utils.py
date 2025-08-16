@@ -38,6 +38,9 @@ def request_with_retry(
             if response.status_code == 429:
                 logger(f"Error429 - Waiting {config.ERROR429_COOLDOWN}s")
                 time.sleep(config.ERROR429_COOLDOWN)
+            elif response.status_code == 111:
+                logger(f"Error111 - Early return")
+                return 111
             else:
                 return response.status_code
 
@@ -81,7 +84,7 @@ def download_from_youtube(url: str, filename: str, lowres:bool=True) -> None:
         # These are the options passed to yt_dlp
     ydl_opts = {'outtmpl': f'{os.path.splitext(filename)[0]}'}
     if lowres:
-        ydl_opts['format'] = 'bestvideo[height<=480]+bestaudio[abr<=128]/best[height<=480]'
+        ydl_opts['format'] = 'bestvideo[height<=480]+bestaudio[abr<=96]/best[height<=480]'
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         try:

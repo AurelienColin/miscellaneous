@@ -33,6 +33,13 @@ CDOP_VRAD_CPT: str = os.path.join(os.path.dirname(__file__), 'cdop_vrad.cpt')
 _KwargsType = TypeVar('_KwargsType', bound='Kwargs')
 _DisplayType = TypeVar('_DisplayType', bound='Display')
 
+def fnone(x, y, f):
+    if x is None:
+        return y
+    if y is None:
+        return x
+    return f(x, y)
+
 
 def plot_decorator(format_ax: bool = True) -> Callable[
     [Callable[..., Any]], Callable[..., Any] 
@@ -351,12 +358,12 @@ class Display:
             grid_p = dict(kwargs.grid_kwargs if kwargs.grid_kwargs else {})
             ax.grid(**grid_p) # type: ignore #Issue with ** unpacking TypedDict vs Dict
             if kwargs.xscale == 'log':
-                ax.grid(visible=kwargs.grid, which='minor', linestyle=':', axis='x', **grid_p) # type: ignore
+                ax.grid(visible=kwargs.grid, which='minor', linestyle=':', axis='x', **grid_p) 
             if kwargs.yscale == 'log':
-                ax.grid(visible=kwargs.grid, which='minor', linestyle=':', axis='y', **grid_p) # type: ignore
+                ax.grid(visible=kwargs.grid, which='minor', linestyle=':', axis='y', **grid_p) 
 
-        ax.set_xlim(kwargs.xmin, kwargs.xmax) # Handles None internally
-        ax.set_ylim(kwargs.ymin, kwargs.ymax) # Handles None internally
+        ax.set_xlim(fnone(ax.get_xlim()[0], kwargs.xmin, min), fnone(ax.get_xlim()[1], kwargs.xmax, max))
+        ax.set_ylim(fnone(ax.get_ylim()[0], kwargs.ymin, min), fnone(ax.get_ylim()[1], kwargs.ymax, max))
         
         set_if_not_none(ax.set_title, kwargs.title)
         if not kwargs.axis_display: # Check boolean flag correctly
@@ -375,10 +382,10 @@ class Display:
         if ax is None: raise ValueError("Axes not provided by decorator for plot")
 
         effective_x = x if x is not None else np.arange(len(y))
-        label = kwargs.labels[0] if kwargs.labels and len(kwargs.labels) > 0 else None # Use first label if sequence
-        ax.plot(effective_x, y, label=label, color=kwargs.color, linestyle=kwargs.linestyle,
+        #label = kwargs.labels[0] if kwargs.labels and len(kwargs.labels) > 0 else None # Use first label if sequence
+        ax.plot(effective_x, y, label=kwargs.labels, color=kwargs.color, linestyle=kwargs.linestyle,
                 linewidth=float(kwargs.linewidth), alpha=kwargs.alpha) # Ensure float
-        if label: ax.legend() # Show legend if labels are provided
+        if kwargs.labels: ax.legend() # Show legend if labels are provided
 
     @plot_decorator(format_ax=True)
     def boxplot(
@@ -551,7 +558,8 @@ class Display:
         seaborn.heatmap(array[::-1], annot=True, ax=ax, fmt=fmt_val, cmap=kwargs.cmap, 
                         vmin=kwargs.vmin if isinstance(kwargs.vmin, (int,float)) else None, # Ensure vmin/vmax are numbers for heatmap
                         vmax=kwargs.vmax if isinstance(kwargs.vmax, (int,float)) else None,
-                        cbar=kwargs.colorbar_display, cbar_kws=cbar_kws) # Important: Heatmap's own cbar args, not compatible with plt.colorbar dict
+                        # cbar=kwargs.colorbar_display, cbar_kws=cbar_kws
+                        ) # Important: Heatmap's own cbar args, not compatible with plt.colorbar dict
         kwargs.grid = False # Heatmap usually doesn't need a grid on top
 
         if kwargs.labels and len(kwargs.labels) > 0:
