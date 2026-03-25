@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 from pathlib import Path
 from PIL import Image, UnidentifiedImageError
 from http.cookiejar import CookieJar
-from rignak.src.logging_utils import logger
+from rignak.logging_utils import logger
 import bs4
 import requests
 from typing import Optional, Callable, Any, Union, Dict, BinaryIO
@@ -85,6 +85,8 @@ def download_from_youtube(url: str, filename: str, lowres:bool=True) -> None:
     ydl_opts = {'outtmpl': f'{os.path.splitext(filename)[0]}'}
     if lowres:
         ydl_opts['format'] = 'bestvideo[height<=480]+bestaudio[abr<=96]/best[height<=480]'
+    else:
+        ydl_opts['format'] = 'bestvideo'
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         try:
