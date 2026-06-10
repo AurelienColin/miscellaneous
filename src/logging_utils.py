@@ -96,7 +96,7 @@ class Logger(logging.Logger):
             display_iteration = min(self.current_iteration, self.iterations)
             
             display_message: str = f"ETA: {termination_time_str} ({display_iteration}/{self.iterations} - {display_percentage:.2f}%) - {message}"
-            self.get_log_function(level)(display_message)
+            self(display_message, level=level)
 
         self.current_iteration += 1
 
