@@ -10,8 +10,22 @@ setup(
     author="Rignak",
     author_email="",  # Add email if available or leave empty
     url="",  # Add project URL if available
-    packages=['rignak', 'rignak.custom_requests'],  # This will automatically find 'rignak' and 'rignak.custom_requests'
-    package_dir={"rignak": "src"},
+    # Dual import surface: consumers use both `rignak.<mod>` and `rignak.src.<mod>`.
+    # Map both package names (plus the custom_requests subpackage under each)
+    # to the same src/ tree so either form resolves after `pip install`.
+    # `rignak.src.init` resolves to src/init.py.
+    packages=[
+        'rignak',
+        'rignak.custom_requests',
+        'rignak.src',
+        'rignak.src.custom_requests',
+    ],
+    package_dir={
+        "rignak": "src",
+        "rignak.custom_requests": "src/custom_requests",
+        "rignak.src": "src",
+        "rignak.src.custom_requests": "src/custom_requests",
+    },
     install_requires=[
         "requests",
         "beautifulsoup4",
