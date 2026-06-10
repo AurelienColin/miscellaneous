@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 from pathlib import Path
 from PIL import Image, UnidentifiedImageError
 from http.cookiejar import CookieJar
-from rignak.logging_utils import logger
+from ..logging_utils import logger
 import bs4
 import requests
 from typing import Optional, Callable, Any, Union, Dict, BinaryIO
