@@ -12,14 +12,30 @@ HEADERS = {
 MAXIMUM_RETRIES = 3
 
 CookieType = CookieJar
+
 try:
     import browsercookie
+except ImportError:
+    browsercookie = None
 
-    COOKIES = browsercookie.load()
-
-except (UnicodeDecodeError, ImportError) as e:
+if browsercookie is None:
     COOKIES = None
-    print(f"Error when reading Cookies: {e}")
+else:
+    try:
+        COOKIES = browsercookie.load()
+    except UnicodeDecodeError as e:
+        COOKIES = None
+        print(f"Error when reading Cookies: {e}")
+
+
+def require_cookies() -> CookieJar:
+    """Return loaded browser cookies or raise if browsercookie is unavailable."""
+    if COOKIES is None:
+        raise RuntimeError(
+            "Browser cookies unavailable: install the optional 'browsercookie' "
+            "dependency and ensure a supported browser profile is present."
+        )
+    return COOKIES
 
 PARALLEL_THREADS_LIMIT = 5
 SECONDS_BETWEEN_THREADS = 0

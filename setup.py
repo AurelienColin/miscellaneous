@@ -1,5 +1,15 @@
 import os
+import shutil
+
 from setuptools import setup, find_packages
+
+# Purge stale build/ before packaging: a leftover build/lib can carry a top-level
+# `requests/` (empty __init__.py) that shadows the PyPI `requests` package in the
+# wheel, breaking `requests.get`. Rebuild from a clean tree every time.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_STALE_BUILD = os.path.join(_HERE, "build")
+if os.path.isdir(_STALE_BUILD):
+    shutil.rmtree(_STALE_BUILD, ignore_errors=True)
 
 setup(
     name="rignak",
