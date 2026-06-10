@@ -5,3 +5,4 @@ build/
 __pycache__/
 *.egg-info/
 *.zip
+scripts/manga/local_config.py
