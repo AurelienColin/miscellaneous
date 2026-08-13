@@ -23,7 +23,11 @@ if browsercookie is None:
 else:
     try:
         COOKIES = browsercookie.load()
-    except UnicodeDecodeError as e:
+    except Exception as e:
+        # Fail soft on ANY loader error (UnicodeDecodeError, D-Bus
+        # SecretServiceNotAvailableException when running as root, ...):
+        # the module contract is COOKIES=None + require_cookies() raising
+        # at the point of use, never an import-time crash.
         COOKIES = None
         print(f"Error when reading Cookies: {e}")
 
